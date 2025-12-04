@@ -64,7 +64,7 @@ def register():
         #generate hash and count into database
         pw_hash = hash_password(password)
         try:
-            create_user(email=email, password_hash=pw_hash,name=name,phone=phone,role="admin")
+            create_user(email=email, password_hash=pw_hash,name=name,phone=phone)
         except Exception as e:
             flash("An error occurred while creating your account","danger")
             return render_template("register.html")
