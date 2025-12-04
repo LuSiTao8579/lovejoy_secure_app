@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="mb-4">Welcome to Lovejoy Antique Evaluation</h1>
+
+<p>
+  This web application allows registered users to request antique evaluation
+  by submitting item information and uploading images.
+</p>
+
+<p>
+  Please register or log in to begin. Administrators can review all evaluation
+  requests through the Admin panel.
+</p>
+
+{% if not session.get('user_id') %}
+  <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+{% else %}
+  <a href="{{ url_for('request_eval') }}" class="btn btn-success">Submit Your Request</a>
+{% endif %}
+
+{% endblock %}

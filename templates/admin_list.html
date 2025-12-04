@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2 class="mb-4">All Evaluation Requests</h2>
+
+<p>This page is only accessible to administrators.</p>
+
+{% if requests %}
+<table class="table table-bordered table-striped align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Submitted At</th>
+            <th>User Info</th>
+            <th>Contact Method</th>
+            <th>Comment</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for r in requests %}
+        <tr>
+            <td>{{ r.created_at }}</td>
+            <td>
+                <strong>{{ r.name }}</strong><br>
+                <small>Email: {{ r.email }}</small><br>
+                <small>Phone: {{ r.phone }}</small>
+            </td>
+            <td>{{ r.preferred_contact }}</td>
+            <td style="max-width: 300px; white-space: pre-wrap;">
+                {{ r.comment }}
+            </td>
+            <td>
+                {% if r.image_filename %}
+                    <a href="{{ url_for('static', filename='uploads/' + r.image_filename) }}" target="_blank">
+                        <img src="{{ url_for('static', filename='uploads/' + r.image_filename) }}"
+                             style="max-height: 100px;" class="img-thumbnail">
+                    </a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<p>No evaluation requests found.</p>
+{% endif %}
+
+{% endblock %}
