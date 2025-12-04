@@ -131,3 +131,12 @@ def get_evaluation_requests_by_user(user_id: int):
             (user_id)
         )
         return cur.fetchall()
+    
+#check all request with user's info
+def get_all_evaluation_requests_with_user():
+    db = get_db()
+    with db.cursor() as cur:
+        cur.execute(
+
+        )
+        return cur.fetchall()

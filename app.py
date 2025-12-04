@@ -6,14 +6,15 @@ from database.db import (
     reset_failed_logins,create_password_reset_token,
     get_password_reset_by_token,mark_password_reset_used,
     update_user_password,create_evaluation_request,
-    get_evaluation_requests_by_user
+    get_evaluation_requests_by_user,
+    get_all_evaluation_requests_with_user,
 )
 from utils.security import (
     hash_password,check_password_strength,
     verify_password,allowed_image_file,
     generate_safe_image_filename,
 )
-from utils.auth import start_session,end_session,login_required
+from utils.auth import start_session,end_session,login_required,admin_required
 from utils.csrf import generate_csrf_token,validate_csrf
 from utils.email_utils import send_password_reset_email
 from datetime import datetime
@@ -230,6 +231,12 @@ def request_eval():
     #GET: show list anb user's requests
     user_requests = get_evaluation_requests_by_user(user_id)
     return render_template("reuqest_eval.html",requests=user_requests)
+
+@app.route("/admin/requests")
+@admin_required
+def admin_requests():
+    all_requests = get_all_evaluation_requests_with_user()
+    return render_template("admin_requests.html", requests=all_requests)
 
 
 @app.before_request
