@@ -1,0 +1,41 @@
+{# templates/register.html #}
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Register</h2>
+
+<form method = "post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class = "mb-3">
+        <label for = "email" class="form-label">Email</label>
+        <input class="form-control" type="email" id="email" name="email" required>
+    </div>
+
+    <div class="mb-3">
+        <label for = "name" class="form-label">FULL name</label>
+        <input class="form-control" type="text" id="name" name="name" required>
+    </div>
+
+    <div class="mb-3">
+        <label for = "phone" class="form-label">Phone</label>
+        <input class="form-control" type="text" id="phone" name="phone">
+    </div>
+
+    <div class="mb-3">
+        <label for = "password" class="form-label">Password</label>
+        <input class="form-control" type="password" id="password" name="password" required>
+        <div class="form-text"
+            At least 8 chars, include upper, lower, digit and special character
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for = "confirm_password" class="form-label">Confirm Password</label>
+        <input class="form-control" type="password" id="confirm_password" name="confirm_password" required>
+    </div>
+
+    <button type="submit" class="btn btn_primary">Register</button>
+    <a href="{{ url_for('login')}}" class="btn btn_link">Already have an account? Login</a>
+</form>
+
+{% endblock %}

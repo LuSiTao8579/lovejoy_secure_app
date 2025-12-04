@@ -1,0 +1,24 @@
+{# templates/login.html #}
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Login</h2>
+
+<form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+
+    <div class="mb-3">
+        <label fot="email" class="form-label">Email</label>
+        <input class="form-control" type="email" id="email" name="email" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input class="form-control" type="password" id="password" name="password" required>
+    </div>
+
+    <button type="submit" class="btn btn_primary">Login</button>
+    <a href="{{ url_for('forgot_password') }}" class="btn btn_link">Forgot password?</a>
+</form>
+
+{% endblock %}

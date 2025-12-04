@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h2>Request Evaluation</h2>
+
+<p>Please describe the item you want to be evaluation and upload a clear photo</p>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token()}}">
+
+    <div class="mb-3">
+        <label for="comment" class="form-label">Description/Comment</label>
+        <textarea class="form-control" id="comment" name="comment" rows="4" maxlength="1000" required></textarea>
+        <div class="form-text">Up to 1000 characters</div>
+    </div>
+
+    <div class="mb-3">
+        <label for="preferred_contact" class="form-label">preferred contact method</label>
+        <select class="form-select" id="preferred_contact" name="preferred_contact" required>
+            <option value="email">Email</option>
+            <option value="phone">Phone</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="photo" class="form-label">Item photo(JPG/PNG/GIF,max 2MB)</label>
+        <input class="form-control" type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png,.gif" required>
+    </div>
+
+    <button type="submit" class="btn btn_primary">Submit request</button>
+</form>
+
+{% if request %}
+<hr>
+<h3>Your previous requests</h3>
+<table class="table table-striped"
+    <thead>
+        <tr>
+            <th>Submitted at</th>
+            <th>Comment</th>
+            <th>contact</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>{{ r.created_at }}</td>
+            <td>{{ r.comment }}</td>
+            <td>{{ r.preferred_contact }}</td>
+            <td>
+                {% if r.image_filename %}
+                    <img src="{{ url_for('static', filename='uploads/' + r.image_filename) }}"
+                        alt="Item image" style="max-height:80px">
+                {% else %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
