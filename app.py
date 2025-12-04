@@ -31,6 +31,10 @@ os.makedirs(app.config["UPLOAD_FOLDER"],exist_ok=True)
 def teardown_db(exception):
     close_db()
 
+@app.route("/")
+def index():
+    return render_template("index.html")    
+
 @app.route("/register",methods = ["GET","POST"])
 def register():
     if request.method == "POST":
@@ -60,7 +64,7 @@ def register():
         #generate hash and count into database
         pw_hash = hash_password(password)
         try:
-            create_user(email=email, password_hash=pw_hash,name=name,phone=phone)
+            create_user(email=email, password_hash=pw_hash,name=name,phone=phone,role="admin")
         except Exception as e:
             flash("An error occurred while creating your account","danger")
             return render_template("register.html")
@@ -106,7 +110,7 @@ def login():
         flash("Logged in successfully","success")
         return redirect(url_for("index"))
     
-    return render_template("login.html")
+    return render_template("login.html",session = session)
 
 @app.route("/logout")
 def logout():
@@ -230,7 +234,7 @@ def request_eval():
     
     #GET: show list anb user's requests
     user_requests = get_evaluation_requests_by_user(user_id)
-    return render_template("reuqest_eval.html",requests=user_requests)
+    return render_template("request_eval.html",requests=user_requests)
 
 @app.route("/admin/requests")
 @admin_required

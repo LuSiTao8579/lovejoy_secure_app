@@ -34,11 +34,11 @@ def create_user(email: str, password_hash: str, name: str, phone: str, role: str
     #if exception with email repeat, return new user_id
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
-            #INSERT INTO users(email, password_hash,name,phone,role)
-            #values (&s,&s,&s,&s,&s)
-            (email,password_hash,name,phone,role)
-        )
+        cur.execute("""
+            INSERT INTO users (email, password_hash, name, phone, role)
+            VALUES (%s, %s, %s, %s, %s)""", 
+            (email, password_hash, name, phone, role)
+            )
         db.commit()
         return cur.lastrowid
     
@@ -67,12 +67,18 @@ def increment_failed_login(user_id: int):
             )
         db.commit()
 
+
 def reset_failed_logins(user_id: int):
     #reset the failed times and locked time
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
-            (user_id)
+        cur.execute("""
+            UPDATE users
+            SET failed_logins = 0,
+                locked_until = NULL
+            WHERE id = %s
+        """, 
+        (user_id,)
         )
     db.commit()
     

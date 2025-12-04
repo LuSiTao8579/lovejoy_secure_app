@@ -6,7 +6,7 @@ def login_required(view):
     def wrapped(*args, **kwargs):
         if "user_id" not in session:
             flash("Please login first", "warning")
-            return redirect(url_for("loging"))
+            return redirect(url_for("login"))
         return view(*args, **kwargs)
     return wrapped
 
