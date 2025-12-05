@@ -58,11 +58,17 @@ def increment_failed_login(user_id: int):
         locked_util = None
         if new_failed >= MAX_FAILED_LOGINS:
             locked_util = datetime.utcnow() + timedelta(minutes= LOCK_MINUTES)
-            cur.execute(
+            cur.execute("""
+                UPDATE users
+                SET failed_logins = %s, locked_until = %s
+                WHERE id = %s
+                """,
                 (new_failed,locked_util,user_id)
             )
         else:
-            cur.execute(
+            cur.execute("""
+                UPDATE users SET failed_logins = %s WHERE id = %s
+                """,
                 (new_failed, user_id)
             )
         db.commit()
@@ -91,7 +97,10 @@ def create_password_reset_token(user_id:int) -> str:
     expires_at = datetime.utcnow() + timedelta(hours=RESET_TOKEN_EXP_HOURS)
 
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute("""
+            INSERT INTO password_resets(user_id,token,expires_at,used)
+            VALUES(%s,%s,%s,0)
+            """,
             (user_id, token, expires_at)
         )
         db.commit()
@@ -101,7 +110,9 @@ def create_password_reset_token(user_id:int) -> str:
 def get_password_reset_by_token(token:str):
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute("""
+            SELECT * FROM password_resets WHERE token = %s
+            """,
             (token,)
         )
         return cur.fetchone()
@@ -109,7 +120,9 @@ def get_password_reset_by_token(token:str):
 def mark_password_reset_used(reset_id: int):
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute("""
+            UPADTE password_resets SET used = 1 WHERE id = %s
+            """,
             (reset_id,)
         )
     db.commit()
@@ -117,7 +130,13 @@ def mark_password_reset_used(reset_id: int):
 def update_user_password(user_id: int, new_password_hash: str):
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute("""
+            UPADTE users
+            SET password_hash = %s,
+                failed_logins = 0,
+                locked_until = NULL
+            WHERE id = %s
+            """,
             (new_password_hash,user_id)
         )
         db.commit()
@@ -125,7 +144,10 @@ def update_user_password(user_id: int, new_password_hash: str):
 def create_evaluation_request(user_id: int,comment: str, preferred_contact: str,image_filename: str | None):
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute( """
+            INSERT INTO evaluation_requests(user_id,comment,preferred_contact,image_filename)
+            VALUES (%s,%s,%s,%s) 
+            """,
             (user_id,comment,preferred_contact,image_filename)
         )
         db.commit()
@@ -133,7 +155,12 @@ def create_evaluation_request(user_id: int,comment: str, preferred_contact: str,
 def get_evaluation_requests_by_user(user_id: int):
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute("""
+            SELECT id,comment,preferred_contact,image_filename,created_at
+            FROM evaluation_requests
+                WHERE user_id = %s
+                ORDER BY created_at DESC
+            """,
             (user_id)
         )
         return cur.fetchall()
@@ -142,7 +169,20 @@ def get_evaluation_requests_by_user(user_id: int):
 def get_all_evaluation_requests_with_user():
     db = get_db()
     with db.cursor() as cur:
-        cur.execute(
+        cur.execute("""
+            SELECT
+                    er.id,
+                    er.preferred_contact,
+                    er.image_filename,
+                    er.created_at,
+                    u.id AS user_id,
+                    u.email,
+                    u.name,
+                    u.phone
+            FROM evaluation_requests er
+            JOIN users u ON er.user_id = u.id
+            ORDER BY er.created_at DESC
+            """
 
         )
         return cur.fetchall()
