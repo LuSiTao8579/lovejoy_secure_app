@@ -196,11 +196,11 @@ def request_eval():
         #check contact chance
         if preferred_contact not in ("email", "phone"):
             flash("Invalid contact method","danger")
-            return render_template("request_eval.html",request=get_evaluation_requests_by_user(user_id))
+            return render_template("request_eval.html",requests=get_evaluation_requests_by_user(user_id))
         
         if not comment:
             flash("Comment is required", "danger")
-            return render_template("request_eval.html", request=get_evaluation_requests_by_user(user_id))
+            return render_template("request_eval.html", requests=get_evaluation_requests_by_user(user_id))
         
         #deal with file and upload file
         file = request.files.get("photo", None)

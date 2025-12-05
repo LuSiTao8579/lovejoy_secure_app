@@ -30,7 +30,7 @@
     <button type="submit" class="btn btn_primary">Submit request</button>
 </form>
 
-{% if request %}
+{% if requests %}
 <hr>
 <h3>Your previous requests</h3>
 <table class="table table-striped"
@@ -53,6 +53,8 @@
                     <img src="{{ url_for('static', filename='uploads/' + r.image_filename) }}"
                         alt="Item image" style="max-height:80px">
                 {% else %}
+                    -
+                {% endif %}
             </td>
         </tr>
     {% endfor %}
